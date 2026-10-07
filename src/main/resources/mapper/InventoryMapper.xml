@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.fruitmarket.mapper.InventoryMapper">
+
+    <!-- 关键：FOR UPDATE 锁定库存行，防止并发超卖 -->
+    <select id="selectProductForUpdate" resultType="com.example.fruitmarket.entity.Product">
+        SELECT p.*, i.current_stock
+        FROM product p
+        JOIN inventory i ON i.product_id = p.product_id
+        WHERE p.product_id = #{productId}
+        FOR UPDATE
+    </select>
+
+    <update id="decreaseStock">
+        UPDATE inventory
+        SET current_stock = current_stock - #{qty}
+        WHERE product_id = #{productId}
+        AND current_stock >= #{qty}
+    </update>
+
+</mapper>

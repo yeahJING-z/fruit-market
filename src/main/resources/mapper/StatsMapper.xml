@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.fruitmarket.mapper.StatsMapper">
+
+    <!-- ① 今日统计 -->
+    <select id="todayStats" resultType="java.util.Map">
+        SELECT COUNT(*) AS orderCount,
+        IFNULL(SUM(total_amount), 0) AS amount
+        FROM orders
+        WHERE DATE(created_at) = CURDATE()
+    </select>
+
+    <!-- ② 累计统计 -->
+    <select id="totalStats" resultType="java.util.Map">
+        SELECT COUNT(*) AS orderCount,
+        IFNULL(SUM(total_amount), 0) AS amount
+        FROM orders
+    </select>
+
+    <!-- ③ 会员总数 -->
+    <select id="memberCount" resultType="int">
+        SELECT COUNT(*) FROM member
+    </select>
+
+    <!-- ④ 库存预警（多表关联） -->
+    <select id="warnList" resultType="com.example.fruitmarket.entity.vo.WarnItemVO">
+        SELECT p.name, p.unit,
+        i.current_stock, i.warn_threshold,
+        (i.warn_threshold - i.current_stock) AS gap
+        FROM inventory i
+        JOIN product p ON p.product_id = i.product_id
+        WHERE i.current_stock &lt;= i.warn_threshold
+        ORDER BY gap DESC
+    </select>
+
+    <!-- ⑤ 热销商品 TOP5（关联 + 分组 + 聚合） -->
+    <select id="top5" resultType="com.example.fruitmarket.entity.vo.TopProductVO">
+        SELECT p.name, p.unit,
+        SUM(oi.quantity) AS qty,
+        SUM(oi.subtotal) AS amount
+        FROM order_item oi
+        JOIN product p ON p.product_id = oi.product_id
+        GROUP BY p.product_id, p.name, p.unit
+        ORDER BY amount DESC
+        LIMIT 5
+    </select>
+
+    <!-- ⑥ 分类销售占比 -->
+    <select id="categorySales" resultType="com.example.fruitmarket.entity.vo.CategorySalesVO">
+        SELECT p.category,
+        SUM(oi.quantity) AS qty,
+        SUM(oi.subtotal) AS amount
+        FROM order_item oi
+        JOIN product p ON p.product_id = oi.product_id
+        GROUP BY p.category
+        ORDER BY amount DESC
+    </select>
+
+    <!-- ⑦ 会员消费排行 TOP5（LEFT JOIN + GROUP BY + HAVING） -->
+    <select id="memberRank" resultType="com.example.fruitmarket.entity.vo.MemberRankVO">
+        SELECT m.member_id, m.name, m.phone, m.points_balance,
+        COUNT(o.order_id) AS order_count,
+        IFNULL(SUM(o.total_amount), 0) AS total_amount
+        FROM member m
+        LEFT JOIN orders o ON o.member_id = m.member_id
+        GROUP BY m.member_id, m.name, m.phone, m.points_balance
+        HAVING order_count > 0
+        ORDER BY total_amount DESC
+        LIMIT 5
+    </select>
+
+    <!-- ⑧ 支付方式分布 -->
+    <select id="payMethodStats" resultType="com.example.fruitmarket.entity.vo.PayMethodVO">
+        SELECT pay_method,
+        COUNT(*) AS order_count,
+        IFNULL(SUM(total_amount), 0) AS amount
+        FROM orders
+        GROUP BY pay_method
+        ORDER BY amount DESC
+    </select>
+
+</mapper>

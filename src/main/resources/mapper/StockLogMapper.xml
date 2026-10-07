@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.fruitmarket.mapper.StockLogMapper">
+
+    <insert id="insert">
+        INSERT INTO stock_log (product_id, change_type, change_qty, stock_after, ref_order_id, created_at)
+        VALUES (#{productId}, #{changeType}, #{changeQty}, #{stockAfter}, #{refOrderId}, #{createdAt})
+    </insert>
+
+</mapper>

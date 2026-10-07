@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.fruitmarket.mapper.PointsRecordMapper">
+
+    <insert id="insert">
+        INSERT INTO points_record (member_id, change_points, reason, order_id, created_at)
+        VALUES (#{memberId}, #{changePoints}, #{reason}, #{orderId}, #{createdAt})
+    </insert>
+
+    <select id="listByMember" resultType="com.example.fruitmarket.entity.PointsRecord">
+        SELECT * FROM points_record
+        WHERE member_id = #{memberId}
+        ORDER BY record_id DESC
+    </select>
+
+</mapper>

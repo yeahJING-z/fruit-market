@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.fruitmarket.mapper.ProductMapper">
+
+    <sql id="baseColumns">
+        p.product_id, p.name, p.category, p.price, p.unit, p.status, p.created_at,
+        i.init_stock, i.current_stock, i.warn_threshold
+    </sql>
+
+    <select id="list" resultType="com.example.fruitmarket.entity.Product">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM product p
+        LEFT JOIN inventory i ON i.product_id = p.product_id
+        <where>
+            <if test="category != null and category != '' and category != '全部'">
+                AND p.category = #{category}
+            </if>
+            AND p.status = 1
+        </where>
+        ORDER BY p.product_id
+    </select>
+
+    <select id="getById" resultType="com.example.fruitmarket.entity.Product">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM product p
+        LEFT JOIN inventory i ON i.product_id = p.product_id
+        WHERE p.product_id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="productId">
+        INSERT INTO product (name, category, price, unit, status)
+        VALUES (#{name}, #{category}, #{price}, #{unit}, 1)
+    </insert>
+
+    <update id="update">
+        UPDATE product
+        SET name = #{name}, category = #{category}, price = #{price}, unit = #{unit}
+        WHERE product_id = #{productId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM product WHERE product_id = #{id}
+    </delete>
+
+    <select id="countOrderItemByProductId" resultType="int">
+        SELECT COUNT(*) FROM order_item WHERE product_id = #{id}
+    </select>
+
+</mapper>

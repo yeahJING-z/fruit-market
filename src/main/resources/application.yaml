@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fruit-market
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 注意下面这行 URL 别写错，特别是数据库名 fruit_market
+    url: jdbc:mysql://localhost:3306/fruit_market?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    # ⚠️ 这里一定要换成你本机 MySQL 的真实密码！
+    password: your_password_here
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+mybatis:
+  mapper-locations:
+    - classpath:mapper/*.xml
+    - classpath:*.xml
+  type-aliases-package: com.example.fruitmarket.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+    spring:
+      web:
+        resources:
+          add-mappings: true
+      mvc:
+        favicon:
+          enabled: false
+
+logging:
+  level:
+    # 打印 Mapper 接口的 SQL 日志
+    com.example.fruitmarket.mapper: debug
