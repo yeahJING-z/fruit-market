@@ -111,16 +111,16 @@ mvn spring-boot:run
 <!-- 把下面的路径换成你自己的截图 -->
 
 ### 登录页
-![登录页](docs/screenshot-login.png)
+![登录页](docs/login.jpg)
 
 ### 买家端 - 在线购物
-![买家端](docs/screenshot-shop.png)
+![买家端](docs/shop.jpg)
 
 ### 卖家端 - 收银台
-![收银台](docs/screenshot-cashier.png)
+![收银台](docs/cashier.jpg)
 
 ### 卖家端 - 数据看板
-![数据看板](docs/screenshot-dashboard.png)
+![数据看板](docs/dashboard.jpg)
 
 ---
 
